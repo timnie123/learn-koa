@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/timnie123/learn-koa#readme",
   "dependencies": {
-    "koa": "^2.11.0"
+    "@koa/router": "^8.0.8",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.3"
   }
 }

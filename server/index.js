@@ -1,8 +1,7 @@
 const Koa = require('koa');
 const app = new Koa();
+const routing = require('./routes');
 
-app.use(async (ctx, next) => {
-   ctx.body = '项目初始化'
-});
+routing(app);
 
 app.listen(2333);
