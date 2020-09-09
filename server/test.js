@@ -10,12 +10,12 @@ const iPhone = puppeteer.devices['iPhone 6'];
 
 (async() =>{
     const tplImgPath = `${imgPath}\\JD`;
-    const browser = await puppeteer.launch({headless: false,isMobile:true,hasTouch:true});
+    const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
     await page.emulate(iPhone);
     // page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1');
     await page.waitFor(5000);
-    await page.goto('https://so.m.jd.com/webportal/channel/m_category?searchFrom=bysearchbox');
+    await page.goto('https://market.m.taobao.com/app/tbsearchwireless-pages/new-catemap/p/s-nx-categories?spm=a215s.7406091.0.0&utparam=%7B%22ranger_buckets_native%22%3A%22tsp2584_31920%22%7D&scm=1007.home_icon.fenl.d&wh_weex=true');
 
     console.log('go to search');
     const nav = await page.$$eval('#category2 li', lis => lis.map(li=>li.id));
