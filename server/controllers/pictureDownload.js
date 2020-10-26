@@ -5,7 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
 const imgPath = path.resolve(__dirname, '../public/img/');
-// const io = require('socket.io')(8085);
 class PictureDownload {
     async download(ctx) {
         const query = ctx.query;
@@ -30,11 +29,13 @@ class PictureDownload {
     }
 
    static async _downloadByBaiDu(params, ctx) {
-       // io.on('connection', socket => {
-       //     socket.emit('test', 'ok');//通知客户端已连接
-       //     console.log('connected');
-       // });
-       const tplImgPath = `${imgPath}\\${params.value}_${new Date().getTime()}`;
+       ctx.body = {
+           code: 200,
+           data: {
+               error: '参数错误'
+           }
+       };
+       /*const tplImgPath = `${imgPath}\\${params.value}_${new Date().getTime()}`;
        ctx.body = {
            code: 200,
            data: {
@@ -78,9 +79,9 @@ class PictureDownload {
                     await src2Img(srcs[i], tplImgPath);
                 }
                 console.log(srcs.length);
-                /*srcs.forEach(async src =>{
+                /!*srcs.forEach(async src =>{
                    await src2Img(src, tplImgPath);
-                });*/
+                });*!/
                 await browser.close();
             setTimeout(async ()=> {
                     // 打包压缩下载的文件
@@ -90,10 +91,10 @@ class PictureDownload {
                     zip.directory(`${tplImgPath}/`, false);
                     zip.finalize();
                 }, srcs.length * 15);
-                /*ctx.attachment(`${tplImgPath}.zip`);
+                /!*ctx.attachment(`${tplImgPath}.zip`);
                 ctx.type = 'application/octet-stream';
-                await send(ctx, `${tplImgPath}.zip`)*/
-        });
+                await send(ctx, `${tplImgPath}.zip`)*!/
+        });*/
     }
 }
 
