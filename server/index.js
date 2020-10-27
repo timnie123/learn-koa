@@ -5,12 +5,13 @@
     const routing = require('./routes');
     const mysql = require('mysql2/promise');
     const dbCfg = require('./config/db.cfg');
+    const { exmoo } = require('./task/hotArticle/hotArticle');
 // const server = require('http').createServer(app.callback());
 // const io = require('socket.io')(server);
 // 处理跨域
     app.use(
         cors({
-            origin: 'http://192.168.0.101:8085',
+            origin: 'http://192.168.5.31:8085',
             maxAge: 5, //指定本次预检请求的有效期，单位为秒。
             credentials: true, //是否允许发送Cookie
             allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], //设置所允许的HTTP请求方法
@@ -29,6 +30,7 @@
     app.context.db = await mysql.createConnection(dbCfg).catch((err) => {
         console.log(err);
     });
+    exmoo(app.context.db);
     routing(app);
     app.listen(2333);
     console.log('server is start');
