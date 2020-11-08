@@ -12,10 +12,10 @@ class HotArticle {
     await page.click('#website_ad_type_2 span');
     // 获取数据
     const mainTitle = await page.$$eval('#hot-container .hot-list-item .hot-list-item-main-title',
-        lis => lis.map(li=>li.textContent.trim() || null));
+        lis => lis.map((li)=>li.textContent.trim()));
     const subTitle = await page.$$eval('#hot-container .hot-list-item .hot-list-item-sub-title',
-        lis => lis.map(li=>li.textContent.trim()  || null));
-    const Url = await page.$$eval('#hot-container .hot-list-item .hot-list-item-link',
+        lis => lis.map(li=>li.textContent.trim()));
+    const Url = await page.$$eval('#hot-container .hot-list-item-content .hot-list-item-link',
       lis => lis.map(li=>li.getAttribute('href')));
     const ImageUrl = await page.$$eval('#hot-container .hot-list-item .hot-list-item-img',
       lis => lis.map(li=>li.getAttribute('src')));
