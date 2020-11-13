@@ -10,11 +10,10 @@ class HotSearch {
     }
     async refreshHot(ctx) {
         const data = await refresh(ctx.app.context.db);
-        const List = await searchList(ctx);
-        console.log('refreshHot ' + data);
+        console.log('refreshHot down');
         ctx.body = {
             code: 200,
-            data: List
+            data: data
         };
     }
 }

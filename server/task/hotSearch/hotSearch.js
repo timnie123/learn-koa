@@ -48,13 +48,15 @@ class HotSearch {
     async weiboTopic(conn) {
         const browser = await puppeteer.launch({headless: true,defaultViewport:{width:1980,height:1200}});
         const page = await browser.newPage();
+        const searchData = [];
         await page.goto('https://d.weibo.com/231650');
         console.log('微博热门话题');
 
         page.on('load', async () => {
-            await page.click('#plc_unlogin_home_main .UG_box_foot .S_txt1');
-            page.on('popup', async() => {
-                const searchData = [];
+            const flag = await page.$$eval('#plc_unlogin_home_main .UG_box_foot .S_txt1', lis => lis.map(li=>li.textContent));
+            if (flag.length > 0) {
+              await page.click('#plc_unlogin_home_main .UG_box_foot .S_txt1');
+              page.on('popup', async() => {
                 const target = await browser.waitForTarget(t=>t.url() === 'https://d.weibo.com/231650');
                 const newPage = await target.page();
                 await newPage.waitFor(2000);
@@ -64,15 +66,31 @@ class HotSearch {
                 await browser.close();
                 // 组装数据
                 for (let i = 0; i < 10; i++) {
-                    searchData[i] = {};
-                    searchData[i].title = title[i];
-                    searchData[i].url = url[i];
-                    searchData[i].ranking = i;
-                    searchData[i].source = 'weiboTopic';
-                    searchData[i].time = new Date().getTime();
+                  searchData[i] = {};
+                  searchData[i].title = title[i];
+                  searchData[i].url = url[i];
+                  searchData[i].ranking = i;
+                  searchData[i].source = 'weiboTopic';
+                  searchData[i].time = new Date().getTime();
                 }
                 updateHotSearch(searchData, conn);
-            })
+              })
+            } else {
+              // 获取热搜数据
+              const title = await page.$$eval('.pt_li[action-type="widget_jumpurl"] .pic_box img', lis => lis.map(li=>li.getAttribute('alt')));
+              const url = await page.$$eval('.W_autocut .S_txt1', lis => lis.map(li=>li.getAttribute('href')));
+              await browser.close();
+              // 组装数据
+              for (let i = 0; i < 10; i++) {
+                searchData[i] = {};
+                searchData[i].title = title[i];
+                searchData[i].url = url[i];
+                searchData[i].ranking = i;
+                searchData[i].source = 'weiboTopic';
+                searchData[i].time = new Date().getTime();
+              }
+              updateHotSearch(searchData, conn);
+            }
         });
     }
     async toutiaoSearch(conn) {

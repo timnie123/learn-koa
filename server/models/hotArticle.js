@@ -7,13 +7,14 @@ class HotArticle {
       flag = rows[0].flag
     }
     let insertSql = '';
-    for (let i = 0; i < data.length; i ++) {
-      if (data[i].flag > flag) {
-        insertSql = `insert into exmoo (mainTitle, subTitle, type, url, imgUrl, createTime, flag, views)
-        values (?,?,?,?,?,?,?,?);`;
+    let list = data.reverse();
+    for (let i = 0; i < list.length; i ++) {
+      if (list[i].flag > flag) {
+        insertSql = `insert into exmoo (mainTitle, subTitle, type, url, imgUrl, createTime, flag, views, updateTime)
+        values (?,?,?,?,?,?,?,?,?);`;
         try {
-          const [rows] = await conn.execute(insertSql,[data[i].mainTitle, data[i].subTitle, data[i].type,
-            data[i].url, data[i].imageUrl, data[i].createDate, data[i].flag, data[i].views]);
+          const [rows] = await conn.execute(insertSql,[list[i].mainTitle, list[i].subTitle, list[i].type,
+            list[i].url, list[i].imageUrl, list[i].createDate, list[i].flag, list[i].views, list[i].upDateTime]);
             console.log('插入exmoo成功')
         } catch (e) {
           console.log(e)
@@ -33,13 +34,14 @@ class HotArticle {
   }
   async insertHk(data, conn) {
     let insertSql = '';
-    for (let i = 0; i < data.length; i ++) {
-      if (data[i].imageUrl) {
-        insertSql = `insert into hk01 (title, type, type_sub, url, img_url, create_time, flag)
-        values (?,?,?,?,?,?,?);`;
+    let list = data.reverse();
+    for (let i = 0; i < list.length; i ++) {
+      if (list[i].imageUrl) {
+        insertSql = `insert into hk01 (title, type, type_sub, url, img_url, create_time, flag, update_time)
+        values (?,?,?,?,?,?,?,?);`;
         try {
-          const [rows] = await conn.execute(insertSql,[data[i].title, data[i].type, data[i].typeSub,
-            data[i].url, data[i].imageUrl, data[i].createDate, data[i].flag]);
+          const [rows] = await conn.execute(insertSql,[list[i].title, list[i].type, list[i].typeSub,
+            list[i].url, list[i].imageUrl, list[i].createDate, list[i].flag, list[i].upDateTime]);
           console.log('插入HK成功')
         } catch (e) {
           console.log(e)
@@ -47,6 +49,17 @@ class HotArticle {
         console.log(i)
       }
     }
+    return true
+  }
+  async queryHk(num, conn) {
+    const querySql = `select * from hk01 ORDER BY id DESC limit ${num * 20},20;`;
+    const [rows] = await conn.execute(querySql);
+    return rows
+  }
+  async countHk(conn) {
+    const querySql = `select count(1) from hk01`;
+    const [rows] = await conn.execute(querySql);
+    return rows
   }
 }
 module.exports = new HotArticle();
