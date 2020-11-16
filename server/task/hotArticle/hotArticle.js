@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const { insertExMoo, insertHk } = require('../../models/hotArticle');
+const { insertExMoo, insertHk, insertFaceBook } = require('../../models/hotArticle');
 class HotArticle {
   async exmoo(coon) {
     const browser = await puppeteer.launch({headless: true, defaultViewport:{width:1980,height:1200}});
@@ -252,6 +252,224 @@ class HotArticle {
     await browser.close();
     // console.log(list)
     await insertHk(list, coon)
+  }
+  async facebookTheTripAddict(coon) {
+    const browser = await puppeteer.launch({headless: true, defaultViewport:{width:1980,height:1200}});
+    const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(0);
+    await page.goto('https://www.facebook.com/pg/thetripaddict/posts/?ref=page_internal');
+    console.log('facebook 旅癮我最大');
+    await page.waitForTimeout(2000);
+    const errorFlag = await page.$$eval('.uiOverlayFooter a[action="cancel"]', lis => lis.map(li=>li.textContent));
+    // 關閉錯誤彈窗
+    if (errorFlag.length > 0) {
+      try {
+        await page.click('.uiOverlayFooter a[action="cancel"]');
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    for (let i = 0; i < 150; i++) {
+      await page.waitForTimeout(500);
+      await page.keyboard.press('ArrowDown');
+    }
+    if (errorFlag.length > 0) {
+      try {
+        await page.click('.uiOverlayFooter a[action="cancel"]');
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    await page.waitForTimeout(1000);
+    const loginFlag = await page.$$eval('#expanding_cta_close_button', lis => lis.map(li=>li.textContent));
+    // 關閉登錄彈窗
+    if (loginFlag.length > 0) {
+      try {
+        await page.click('#expanding_cta_close_button');
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    // 获取数据
+    const list = await page.evaluate(() => {
+      const hotList = document.querySelectorAll('#pagelet_timeline_main_column .userContentWrapper');
+      let arr = [];
+      for (let i = 0; i < 10; i++) {
+        let obj = {};
+        const eleTitle = hotList[i].querySelector('div[data-testid="post_message"] .text_exposed_root p:first-child');
+        const eleUrl = hotList[i].querySelector('.commentable_item input[name="ft_ent_identifier"]');
+        const eleImageUrl = hotList[i].querySelector('.scaledImageFitWidth');
+        const eleVideoCoverUrl = hotList[i].querySelector('._3chq');
+        const eleCreateDate = hotList[i].querySelector('.timestampContent');
+        const eleLikeNum = hotList[i].querySelector('.commentable_item ._81hb');
+        const eleCommentNum = hotList[i].querySelector('.commentable_item ._4vn1 span:first-child a');
+        const eleShareNum = hotList[i].querySelector('.commentable_item ._4vn1 span:last-child a');
+        let title = '';
+        let url = '';
+        let imageUrl = '';
+        let videoCoverUrl = '';
+        let createDate = '';
+        let likeNum = '';
+        let commentNum = '';
+        let shareNum = '';
+        if (eleTitle) {
+          title = eleTitle.textContent.trim()
+        }
+        if (eleUrl) {
+          url =`/thetripaddict/posts/${eleUrl.getAttribute('value')}`
+        }
+        if (eleImageUrl) {
+          imageUrl = eleImageUrl.getAttribute('src')
+        }
+        if (eleVideoCoverUrl) {
+          videoCoverUrl = eleVideoCoverUrl.getAttribute('src')
+        }
+        if (eleLikeNum) {
+          likeNum = eleLikeNum.textContent
+        }
+        if (eleCommentNum) {
+          commentNum = eleCommentNum.textContent
+        }
+        if (eleShareNum) {
+          shareNum = eleShareNum.textContent
+        }
+        if (eleCreateDate) {
+          let date = eleCreateDate.textContent;
+          date = date.replace('月', '/');
+          date = date.replace('日', '/' + new Date().getFullYear());
+          if (isNaN(new Date(date).getTime())) {
+            createDate = new Date().getTime();
+          } else {
+            createDate = new Date(date).getTime();
+          }
+        }
+
+        obj['title'] = title;
+        obj['url'] = url;
+        obj['type'] = 'post';
+        obj['user'] = '旅癮我最大';
+        obj['likeNum'] = likeNum;
+        obj['commentNum'] = commentNum;
+        obj['shareNum'] = shareNum;
+        obj['imageUrl'] = imageUrl || videoCoverUrl;
+        obj['createDate'] = createDate;
+        obj['upDateTime'] = new Date().getTime();
+        arr.push(obj);
+      }
+      return arr
+    });
+    await browser.close();
+    // console.log(list)
+    await insertFaceBook(list, coon)
+  }
+  async facebookUMagazineHK(coon) {
+    const browser = await puppeteer.launch({headless: true, defaultViewport:{width:1980,height:1200}});
+    const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(0);
+    await page.goto('https://www.facebook.com/pg/umagazinehk/posts/?ref=page_internal');
+    console.log('facebook U Magazine');
+    await page.waitForTimeout(2000);
+    const errorFlag = await page.$$eval('.uiOverlayFooter a[action="cancel"]', lis => lis.map(li=>li.textContent));
+    // 關閉錯誤彈窗
+    if (errorFlag.length > 0) {
+      try {
+        await page.click('.uiOverlayFooter a[action="cancel"]');
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    for (let i = 0; i < 150; i++) {
+      await page.waitForTimeout(500);
+      await page.keyboard.press('ArrowDown');
+    }
+    if (errorFlag.length > 0) {
+      try {
+        await page.click('.uiOverlayFooter a[action="cancel"]');
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    await page.waitForTimeout(1000);
+    const loginFlag = await page.$$eval('#expanding_cta_close_button', lis => lis.map(li=>li.textContent));
+    // 關閉登錄彈窗
+    if (loginFlag.length > 0) {
+      try {
+        await page.click('#expanding_cta_close_button');
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    // 获取数据
+    const list = await page.evaluate(() => {
+      const hotList = document.querySelectorAll('#pagelet_timeline_main_column .userContentWrapper');
+      let arr = [];
+      for (let i = 0; i < 10; i++) {
+        let obj = {};
+        const eleTitle = hotList[i].querySelector('div[data-testid="post_message"] .text_exposed_root p:first-child');
+        const eleUrl = hotList[i].querySelector('.commentable_item input[name="ft_ent_identifier"]');
+        const eleImageUrl = hotList[i].querySelector('.scaledImageFitWidth');
+        const eleVideoCoverUrl = hotList[i].querySelector('._3chq');
+        const eleCreateDate = hotList[i].querySelector('.timestampContent');
+        const eleLikeNum = hotList[i].querySelector('.commentable_item ._81hb');
+        const eleCommentNum = hotList[i].querySelector('.commentable_item ._4vn1 span:first-child a');
+        const eleShareNum = hotList[i].querySelector('.commentable_item ._4vn1 span:last-child a');
+        let title = '';
+        let url = '';
+        let imageUrl = '';
+        let videoCoverUrl = '';
+        let createDate = '';
+        let likeNum = '';
+        let commentNum = '';
+        let shareNum = '';
+        if (eleTitle) {
+          title = eleTitle.textContent.trim()
+        }
+        if (eleUrl) {
+          url =`/umagazinehk/posts/${eleUrl.getAttribute('value')}`
+        }
+        if (eleImageUrl) {
+          imageUrl = eleImageUrl.getAttribute('src')
+        }
+        if (eleVideoCoverUrl) {
+          videoCoverUrl = eleVideoCoverUrl.getAttribute('src')
+        }
+        if (eleLikeNum) {
+          likeNum = eleLikeNum.textContent
+        }
+        if (eleCommentNum) {
+          commentNum = eleCommentNum.textContent
+        }
+        if (eleShareNum) {
+          shareNum = eleShareNum.textContent
+        }
+        if (eleCreateDate) {
+          let date = eleCreateDate.textContent;
+          date = date.replace('月', '/');
+          date = date.replace('日', '/' + new Date().getFullYear());
+          if (isNaN(new Date(date).getTime())) {
+            createDate = new Date().getTime();
+          } else {
+            createDate = new Date(date).getTime();
+          }
+        }
+
+        obj['title'] = title;
+        obj['url'] = url;
+        obj['type'] = 'post';
+        obj['user'] = 'U Magazine';
+        obj['likeNum'] = likeNum;
+        obj['commentNum'] = commentNum;
+        obj['shareNum'] = shareNum;
+        obj['imageUrl'] = imageUrl || videoCoverUrl;
+        obj['createDate'] = createDate;
+        obj['upDateTime'] = new Date().getTime();
+        arr.push(obj);
+      }
+      return arr
+    });
+    await browser.close();
+    // console.log(list)
+    await insertFaceBook(list, coon)
   }
 }
 module.exports = new HotArticle();

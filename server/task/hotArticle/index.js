@@ -2,7 +2,9 @@ const {
   hkLife,
   hkTechnology,
   exmooLife,
-  exmoo
+  exmoo,
+  facebookTheTripAddict,
+  facebookUMagazineHK
 } = require('./hotArticle');
 class Task {
   async refreshHkLife(conn) {
@@ -19,6 +21,14 @@ class Task {
   }
   async refreshExmooNews(conn) {
     await exmoo(conn);
+    return true
+  }
+  async refreshFBTripAddict(conn) {
+    await facebookTheTripAddict(conn);
+    return true
+  }
+  async refreshFBUMagazineHK(conn) {
+    await facebookUMagazineHK(conn);
     return true
   }
 }

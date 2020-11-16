@@ -61,5 +61,39 @@ class HotArticle {
     const [rows] = await conn.execute(querySql);
     return rows
   }
+  async insertFaceBook(data, conn) {
+    let insertSql = '';
+    let list = data.reverse();
+    let currentDate = new Date(new Date().toLocaleDateString() + ' 00:00:00').getTime();
+    for (let i = 0; i < list.length; i ++) {
+      if (list[i].createDate < currentDate) {
+        continue
+      }
+      if (list[i].imageUrl) {
+        insertSql = `insert into facebook_post (title, type, like_num, comment_num, share_num,
+         create_time, update_time, url, image_url, user)
+        values (?,?,?,?,?,?,?,?,?,?);`;
+        try {
+          const [rows] = await conn.execute(insertSql,[list[i].title, list[i].type, list[i].likeNum, list[i].commentNum,
+            list[i].shareNum, list[i].createDate, list[i].upDateTime, list[i].url, list[i].imageUrl, list[i].user]);
+          console.log('插入FB成功')
+        } catch (e) {
+          console.log(e)
+        }
+        console.log(i)
+      }
+    }
+    return true
+  }
+  async queryFB(num, conn) {
+    const querySql = `select * from facebook_post ORDER BY id DESC limit ${num * 20},20;`;
+    const [rows] = await conn.execute(querySql);
+    return rows
+  }
+  async countFB(conn) {
+    const querySql = `select count(1) from facebook_post`;
+    const [rows] = await conn.execute(querySql);
+    return rows
+  }
 }
 module.exports = new HotArticle();
