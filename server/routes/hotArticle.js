@@ -10,7 +10,9 @@ const {
   refreshHkLife,
   searchFb,
   refreshFBTripAddict,
-  refreshFBUMagazineHK
+  refreshFBUMagazineHK,
+  searchCTM,
+  refreshCtmActivity
 } = require('../controllers/HotArticle');
 
 router.get('/api/hotArticle/exmoo/news', searchExmoo);
@@ -22,6 +24,8 @@ router.get('/api/hotArticle/hk01/refreshLife', refreshHkLife);
 router.get('/api/hotArticle/fb/post', searchFb);
 router.get('/api/hotArticle/fb/refreshTripAddict', refreshFBTripAddict);
 router.get('/api/hotArticle/fb/refreshUMagazineHK', refreshFBUMagazineHK);
+router.get('/api/hotArticle/ctm', searchCTM);
+router.get('/api/hotArticle/ctm/refreshCtmActivity', refreshCtmActivity);
 
 
 module.exports = router;

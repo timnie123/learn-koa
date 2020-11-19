@@ -95,5 +95,35 @@ class HotArticle {
     const [rows] = await conn.execute(querySql);
     return rows
   }
+  async insertCTM(data, conn) {
+    let insertSql = '';
+    let list = data.reverse();
+    for (let i = 0; i < list.length; i ++) {
+      if (list[i].imageUrl) {
+        insertSql = `insert into ctm (title, carver, location, url, update_time,
+         create_time, type, flag, activity_date)
+        values (?,?,?,?,?,?,?,?,?);`;
+        try {
+          const [rows] = await conn.execute(insertSql,[list[i].title, list[i].imageUrl, list[i].location, list[i].url,
+            list[i].upDateTime, list[i].createDate, list[i].type, list[i].flag, list[i].activityDate]);
+          console.log('插入CTM成功')
+        } catch (e) {
+          console.log(e)
+        }
+        console.log(i)
+      }
+    }
+    return true
+  }
+  async queryCTM(num, conn) {
+    const querySql = `select * from ctm ORDER BY id DESC limit ${num * 20},20;`;
+    const [rows] = await conn.execute(querySql);
+    return rows
+  }
+  async countCTM(conn) {
+    const querySql = `select count(1) from ctm`;
+    const [rows] = await conn.execute(querySql);
+    return rows
+  }
 }
 module.exports = new HotArticle();

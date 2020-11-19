@@ -4,7 +4,9 @@ const {
   queryHk,
   countHk,
   queryFB,
-  countFB
+  countFB,
+  queryCTM,
+  countCTM
 } = require('../models/hotArticle');
 const {
   refreshHkTec,
@@ -12,7 +14,8 @@ const {
   refreshExmooLife,
   refreshExmooNews,
   refreshFBTripAddict,
-  refreshFBUMagazineHK
+  refreshFBUMagazineHK,
+  refreshCtmActivity
 } = require('../task/hotArticle/index');
 class HotArticle {
   async searchExmoo(ctx) {
@@ -47,6 +50,20 @@ class HotArticle {
     const page = ctx.query.currentPage || 1;
     const data = await queryFB(page, ctx.app.context.db);
     const num = await countFB(ctx.app.context.db);
+    ctx.body = {
+      code: 200,
+      data: {
+        pager:{
+          total: num[0]['count(1)']
+        },
+        info: data
+      }
+    };
+  }
+  async searchCTM(ctx) {
+    const page = ctx.query.currentPage || 1;
+    const data = await queryCTM(page, ctx.app.context.db);
+    const num = await countCTM(ctx.app.context.db);
     ctx.body = {
       code: 200,
       data: {
@@ -116,6 +133,17 @@ class HotArticle {
     console.log('refresh FBTripAddict router');
     const data = await refreshFBUMagazineHK(ctx.app.context.db);
     console.log('refreshUMagazineHK ' + data);
+    ctx.body = {
+      code: 200,
+      data: {
+        message: 'REFRESH SUCCESS'
+      }
+    };
+  }
+  async refreshCtmActivity(ctx) {
+    console.log('refresh CtmActivity router');
+    const data = await refreshCtmActivity(ctx.app.context.db);
+    console.log('CtmActivity ' + data);
     ctx.body = {
       code: 200,
       data: {

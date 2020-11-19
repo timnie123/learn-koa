@@ -4,7 +4,8 @@ const {
   exmooLife,
   exmoo,
   facebookTheTripAddict,
-  facebookUMagazineHK
+  facebookUMagazineHK,
+  ctmActivity
 } = require('./hotArticle');
 class Task {
   async refreshHkLife(conn) {
@@ -29,6 +30,10 @@ class Task {
   }
   async refreshFBUMagazineHK(conn) {
     await facebookUMagazineHK(conn);
+    return true
+  }
+  async refreshCtmActivity(conn) {
+    await ctmActivity(conn);
     return true
   }
 }

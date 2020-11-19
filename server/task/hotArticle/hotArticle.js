@@ -1,5 +1,10 @@
 const puppeteer = require('puppeteer');
-const { insertExMoo, insertHk, insertFaceBook } = require('../../models/hotArticle');
+const {
+  insertExMoo,
+  insertHk,
+  insertFaceBook,
+  insertCTM
+} = require('../../models/hotArticle');
 class HotArticle {
   async exmoo(coon) {
     const browser = await puppeteer.launch({headless: true, defaultViewport:{width:1980,height:1200}});
@@ -474,6 +479,62 @@ class HotArticle {
     await browser.close();
     // console.log(list)
     await insertFaceBook(list, coon)
+  }
+  async ctmActivity(coon) {
+    const browser = await puppeteer.launch({headless: true, defaultViewport:{width:1980,height:1200}});
+    const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(0);
+    await page.goto('https://calendar.cyberctm.com/');
+    console.log('CTM Activity');
+    await page.waitForTimeout(1000);
+    // 获取数据
+    const list = await page.evaluate(() => {
+      const hotList = document.querySelectorAll('#content .isotope-item');
+      let arr = [];
+      for (let i = 0; i < 10; i++) {
+        let obj = {};
+        const eleTitle = hotList[i].querySelector('.event-title a');
+        const eleImageUrl = hotList[i].querySelector('.open-popup-link a img');
+        const eleLocation = hotList[i].querySelector('.event-location');
+        const eleCreateDate = hotList[i].querySelector('.first-date');
+        const eleActivityDate = hotList[i].querySelector('.last-date');
+        let title = '';
+        let imageUrl = '';
+        let location = '';
+        let createDate = '';
+        let activityDate = '';
+        if (eleTitle) {
+          title = eleTitle.textContent.trim()
+        }
+        if (eleImageUrl) {
+          imageUrl = eleImageUrl.getAttribute('data-original')
+        }
+        if (eleLocation) {
+          location = eleLocation.textContent.trim()
+        }
+        if (eleCreateDate) {
+          createDate = eleCreateDate.textContent.trim()
+        }
+        if (eleActivityDate) {
+          activityDate = eleActivityDate.textContent.trim()
+        }
+
+        obj['title'] = title;
+        obj['url'] = 'https://calendar.cyberctm.com/';
+        obj['type'] = 'activity';
+        obj['location'] = location;
+        obj['imageUrl'] = imageUrl;
+        obj['createDate'] = createDate;
+        obj['activityDate'] = activityDate;
+        obj['flag'] = 1;
+        obj['upDateTime'] = new Date().getTime();
+        arr.push(obj);
+      }
+      return arr
+    });
+    await browser.close();
+    // console.log(list)
+    await insertCTM(list, coon)
   }
 }
 module.exports = new HotArticle();
